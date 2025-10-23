@@ -1,7 +1,7 @@
 package com.example.playground.app.common.presentation.screen
 
 import androidx.lifecycle.ViewModel
-import com.example.playground.app.common.core.helper.Navigator
+import com.example.playground.app.common.core.helper.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,9 +28,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onIntent(intent: HomeIntents) {
+    fun processIntent(intent: HomeIntents) {
         when (intent) {
-            is HomeIntents.NewsTileClicked -> {
+            is HomeIntents.FeatureClicked -> {
 
             }
         }
