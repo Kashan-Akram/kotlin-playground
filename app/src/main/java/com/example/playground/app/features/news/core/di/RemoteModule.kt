@@ -1,6 +1,7 @@
 package com.example.playground.app.features.news.core.di
 
 import com.example.playground.app.features.news.core.helper.NewsConstants
+import com.example.playground.app.features.news.data.remote.NewsApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,6 +45,15 @@ object RemoteModule {
             .client(newsHttpClient)
             .baseUrl(NewsConstants.BASE_URL)
             .build()
+    }
+
+    @Provides
+    @ViewModelScoped
+    @Named("NewsApi")
+    fun providesNewsApiService(
+        @Named("NewsRetrofit") retrofit: Retrofit
+    ) : NewsApiService {
+        return retrofit.create(NewsApiService::class.java)
     }
 
 }
