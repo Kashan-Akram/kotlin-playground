@@ -2,7 +2,7 @@ package com.example.playground.app.features.news.core.di
 
 import com.example.playground.app.features.news.data.NewsRepositoryImpl
 import com.example.playground.app.features.news.domain.NewsRepository
-import com.example.playground.app.features.news.domain.usecase.NewsListUseCase
+import com.example.playground.app.features.news.domain.usecase.GetNewsPagedUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -28,10 +28,10 @@ object NewsModule {
 
     @ViewModelScoped
     @Provides
-    fun provideNewsListUseCase(
+    fun provideNewsPagedUseCase(
         newsRepository: NewsRepository
-    ) : NewsListUseCase {
-        return NewsListUseCase(newsRepository)
+    ) : GetNewsPagedUseCase {
+        return GetNewsPagedUseCase(newsRepository)
     }
 
 }
