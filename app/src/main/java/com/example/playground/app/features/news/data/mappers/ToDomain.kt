@@ -1,5 +1,6 @@
 package com.example.playground.app.features.news.data.mappers
 
+import com.example.playground.app.features.news.data.local.models.ArticleEntity
 import com.example.playground.app.features.news.data.remote.models.ArticleResponse
 import com.example.playground.app.features.news.domain.models.Article
 
@@ -19,6 +20,33 @@ import com.example.playground.app.features.news.domain.models.Article
 
 fun ArticleResponse.toDomain() : Article {
     return Article(
+        title = this.title.orEmpty(),
+        description = this.description.orEmpty(),
+        content = this.content.orEmpty(),
+        urlToImage = this.urlToImage.orEmpty()
+    )
+}
+
+fun ArticleEntity.toDomain() : Article {
+    return Article(
+        title = this.title,
+        description = this.description,
+        content = this.content,
+        urlToImage = this.urlToImage
+    )
+}
+
+fun Article.toData() : ArticleEntity {
+    return ArticleEntity(
+        title = this.title,
+        description = this.description,
+        content = this.content,
+        urlToImage = this.urlToImage
+    )
+}
+
+fun ArticleResponse.toData() : ArticleEntity {
+    return ArticleEntity(
         title = this.title.orEmpty(),
         description = this.description.orEmpty(),
         content = this.content.orEmpty(),

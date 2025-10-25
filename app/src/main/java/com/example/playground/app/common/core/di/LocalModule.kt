@@ -6,6 +6,7 @@ import com.example.playground.app.common.data.local.DataBase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -15,9 +16,9 @@ object LocalModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(appContext: Context): DataBase {
+    fun provideDatabase(@ApplicationContext context: Context): DataBase {
         return Room.databaseBuilder(
-            appContext,
+            context,
             DataBase::class.java,
             "app_database"
         ).fallbackToDestructiveMigration(false)

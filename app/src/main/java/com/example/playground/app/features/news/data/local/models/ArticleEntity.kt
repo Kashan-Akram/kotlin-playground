@@ -8,8 +8,7 @@ import androidx.room.PrimaryKey
     tableName = "articles"
 )
 data class ArticleEntity(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo("article_ID") val articleID : Int,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo("article_ID") val articleID : Int = 0,
     @ColumnInfo("title") val title : String,
     @ColumnInfo("description") val description : String,
     @ColumnInfo("content") val content : String,

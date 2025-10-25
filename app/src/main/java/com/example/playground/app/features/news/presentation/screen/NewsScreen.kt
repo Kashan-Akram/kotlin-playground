@@ -30,7 +30,7 @@ import kotlinx.coroutines.FlowPreview
 fun NewsScreen() {
 
     val viewModel = hiltViewModel<NewsViewModel>()
-    val pagingItems = viewModel.articlesFlow.collectAsLazyPagingItems()
+    val pagingItems = viewModel.articlesPaging.collectAsLazyPagingItems()
 
     Scaffold(
         modifier = Modifier

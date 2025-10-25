@@ -9,6 +9,12 @@ interface NewsRepository {
 
 //    suspend fun getNews(queries: NewsQueries) : Resultt<News>
 
+    fun getNewsPagedViaRemoteMediator() : Flow<PagingData<Article>>
+
     fun getNewsPaged(queries: NewsQueries) : Flow<PagingData<Article>>
+
+    fun getNewsPagedFromDB() : Flow<PagingData<Article>>
+
+    suspend fun insertArticles(articles : List<Article>)
 
 }

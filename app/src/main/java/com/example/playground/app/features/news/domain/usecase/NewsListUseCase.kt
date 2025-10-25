@@ -10,9 +10,23 @@ import javax.inject.Inject
 class GetNewsPagedUseCase @Inject constructor(
     private val newsRepository: NewsRepository
 ) {
-    operator fun invoke(queries: NewsQueries): Flow<PagingData<Article>> {
+
+    fun getNewsViaRemoteMediator() : Flow<PagingData<Article>> {
+        return newsRepository.getNewsPagedViaRemoteMediator()
+    }
+
+    fun getNewsPagedFromAPI(queries: NewsQueries): Flow<PagingData<Article>> {
         return newsRepository.getNewsPaged(queries)
     }
+
+    fun getNewsPagedFromDB(): Flow<PagingData<Article>> {
+        return newsRepository.getNewsPagedFromDB()
+    }
+
+    suspend fun insertArticlesToDB(articles : List<Article>) {
+        newsRepository.insertArticles(articles)
+    }
+
 }
 
 //class NewsListUseCase @Inject constructor(
