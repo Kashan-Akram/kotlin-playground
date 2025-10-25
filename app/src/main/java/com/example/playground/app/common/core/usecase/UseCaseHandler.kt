@@ -13,8 +13,8 @@ import kotlinx.coroutines.withContext
 class UseCaseHandler private constructor() {
 
     suspend fun <Q : SuspendUseCase.RequestValues, R> execute(
-        values: Q,
         useCase: SuspendUseCase<Q, R>,
+        values: Q,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ): Resultt<R> {
         return withContext(dispatcher) {
@@ -23,8 +23,8 @@ class UseCaseHandler private constructor() {
     }
 
     fun <Q : SuspendUseCase.RequestValues, R> executeAsync(
-        values: Q,
         useCase: SuspendUseCase<Q, R>,
+        values: Q,
         scope: CoroutineScope,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ): Deferred<Resultt<R>> {
@@ -34,8 +34,8 @@ class UseCaseHandler private constructor() {
     }
 
     fun <Q : FlowUseCase.RequestValues, R> executeFlow(
-        values: Q,
         useCase: FlowUseCase<Q, R>,
+        values: Q,
         dispatcher: CoroutineDispatcher = Dispatchers.IO
     ): Flow<Resultt<R>> {
         return useCase.run(values).flowOn(dispatcher)

@@ -31,6 +31,14 @@ class HomeViewModel @Inject constructor(
     fun processIntent(intent: HomeIntents) {
         when (intent) {
             is HomeIntents.FeatureClicked -> {
+                navigateToFeature(intent.feature)
+            }
+        }
+    }
+
+    private fun navigateToFeature(feature : String) {
+        when (feature) {
+            "NEWS" -> {
 
             }
         }

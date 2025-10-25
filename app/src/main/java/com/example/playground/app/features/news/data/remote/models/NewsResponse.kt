@@ -1,4 +1,4 @@
-package com.example.playground.app.features.news.core.models.remote
+package com.example.playground.app.features.news.data.remote.models
 
 import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
@@ -7,11 +7,11 @@ import kotlinx.serialization.SerialName
 data class NewsResponse(
     @SerialName("status") val status : String? = null,
     @SerialName("totalResults") val newsCount : Int? = null,
-    @SerialName("articles") val articles : List<Article?>? = null,
+    @SerialName("articles") val articles : List<ArticleResponse?>? = null,
 )
 
 @Keep
-data class Article(
+data class ArticleResponse(
     @SerialName("source") val source: Source? = null,
     @SerialName("author") val author: String? = null,
     @SerialName("title") val title: String? = null,
