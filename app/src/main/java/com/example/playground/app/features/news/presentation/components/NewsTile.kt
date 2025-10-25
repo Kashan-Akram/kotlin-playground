@@ -23,7 +23,7 @@ fun NewsTile(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp, horizontal = 15.dp)
+            .padding(vertical = 15.dp, horizontal = 15.dp)
             .clickable(
                 enabled = article.content.isNotBlank(),
                 onClick = onClick

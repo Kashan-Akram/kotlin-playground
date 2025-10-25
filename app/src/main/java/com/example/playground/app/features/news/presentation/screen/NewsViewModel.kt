@@ -1,5 +1,6 @@
 package com.example.playground.app.features.news.presentation.screen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playground.app.common.core.usecase.UseCaseHandler
@@ -24,62 +25,42 @@ class NewsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(NewsUiState())
     val uiState: StateFlow<NewsUiState> = _uiState.asStateFlow()
 
-    private val maxArticlesInMemory = 50
-    private val maxArticlesInPage = 10
-    private val maxPagesInMemory = maxArticlesInMemory / maxArticlesInPage
     private var isLoadingMore = false
 
     init {
-        loadNews(LoadDirection.APPEND)
+        loadNews()
     }
 
     fun handleIntents(intent: NewsIntents) {
         when (intent) {
-            is NewsIntents.ScrollPositionChanged -> {
-                handleScrollChanges(intent.firstVisibleIndex, intent.lastVisibleIndex)
+            NewsIntents.LoadMore -> {
+                loadNews()
             }
         }
     }
 
-    private fun handleScrollChanges(firstVisibleIndex: Int, lastVisibleIndex: Int) {
-        if (isLoadingMore) return
-        val state = _uiState.value
-        if (firstVisibleIndex <= 5 && !isLoading() && !state.atStart) {
-            loadNews(LoadDirection.PREPEND)
-        } else {
-            val itemsRemaining = state.newsList.size - lastVisibleIndex
-            if (itemsRemaining <= 5 && !isLoading() && !state.atEnd) {
-                loadNews(LoadDirection.APPEND)
-            }
+    fun loadNews() {
+        if (isLoading() || isLoadingMore) {
+            Log.d("myLogs", "view model function returned early")
+            return
         }
-    }
-
-    private fun loadNews(loadDirection: LoadDirection) {
-        if (isLoading() || isLoadingMore) return
         setLoading()
         isLoadingMore = true
         viewModelScope.launch {
             val state = _uiState.value
-            val pageToLoad = when (loadDirection) {
-                LoadDirection.APPEND -> {
-                    (state.loadedPagesRange.last + 1)
-                }
-                LoadDirection.PREPEND -> {
-                    (state.loadedPagesRange.first - 1).coerceAtLeast(1)
-                }
-            }
+            val pageToLoad = state.loadedPagesRange.last + 1
             val newsResult = useCaseHandler.execute(
                 useCase = newsListUseCase,
                 values = NewsRequestValues(
-                    query = "",
-                    articlesPerPage = maxArticlesInPage,
+                    query = "android",
+                    articlesPerPage = 10,
                     page = pageToLoad
                 ),
                 dispatcher = Dispatchers.IO
             )
             newsResult.fold(
                 success = { data ->
-                    handleSuccessfulLoad(data.articles, pageToLoad, loadDirection)
+                    handleSuccessfulLoad(data.articles, pageToLoad)
                 },
                 failure = { error ->
                     handleError()
@@ -89,48 +70,18 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    private fun handleSuccessfulLoad(newArticles: List<Article>, loadedPage: Int, loadDirection: LoadDirection) {
+    private fun handleSuccessfulLoad(newArticles: List<Article>, loadedPage: Int) {
         val state = _uiState.value
         val currentArticles = state.newsList
-        val totalCombinedArticles = when (loadDirection) {
-            LoadDirection.APPEND -> {
-                currentArticles + newArticles
-            }
-            LoadDirection.PREPEND -> {
-                newArticles + currentArticles
-            }
-        }
-        val newPageRange = when (loadDirection) {
-            LoadDirection.APPEND -> {
-                (state.loadedPagesRange.first)..(loadedPage)
-            }
-            LoadDirection.PREPEND -> {
-                (loadedPage)..(state.loadedPagesRange.last)
-            }
-        }
-        var finalArticlesAndPageRange : Pair<List<Article>, IntRange>
-        val numberOfPagesToDrop = newPageRange.count() - maxPagesInMemory
-        val numberOfArticlesToKeep = totalCombinedArticles.size - numberOfPagesToDrop * maxArticlesInPage
-        when (loadDirection) {
-            LoadDirection.APPEND -> {
-                val articlesToTake = totalCombinedArticles.takeLast(numberOfArticlesToKeep)
-                val pageRangeToTake = (newPageRange.first + numberOfPagesToDrop)..(newPageRange.last)
-                finalArticlesAndPageRange = Pair(articlesToTake, pageRangeToTake)
-            }
-            LoadDirection.PREPEND -> {
-                val articlesToTake = totalCombinedArticles.take(numberOfArticlesToKeep)
-                val pageRangeToTake = (newPageRange.first)..(newPageRange.last - numberOfPagesToDrop)
-                finalArticlesAndPageRange = Pair(articlesToTake, pageRangeToTake)
-            }
-        }
+        val totalCombinedArticles = currentArticles + newArticles
+        val newPageRange = (state.loadedPagesRange.first)..(loadedPage)
          _uiState.update { state ->
              state.copy(
                  isLoading = false,
-                 error = "",
-                 newsList = finalArticlesAndPageRange.first,
-                 loadedPagesRange = finalArticlesAndPageRange.second,
-                 atEnd = newArticles.isEmpty() && loadDirection == LoadDirection.APPEND,
-                 atStart = loadedPage == 1 && loadDirection == LoadDirection.PREPEND
+                 newsList = totalCombinedArticles,
+                 loadedPagesRange = newPageRange,
+                 atEnd = newArticles.isEmpty(),
+                 atStart = loadedPage == 1
              )
          }
     }
@@ -138,8 +89,7 @@ class NewsViewModel @Inject constructor(
     private fun handleError() {
         _uiState.update { state ->
             state.copy(
-                isLoading = false,
-                error = "Error Occurred"
+                isLoading = false
             )
         }
     }
@@ -151,8 +101,7 @@ class NewsViewModel @Inject constructor(
     private fun setLoading() {
         _uiState.update { state ->
             state.copy(
-                isLoading = true,
-                error = ""
+                isLoading = true
             )
         }
     }
