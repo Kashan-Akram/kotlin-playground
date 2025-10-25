@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.playground.app.common.presentation.destination.Home
 import com.example.playground.app.common.presentation.destination.homeDestination
+import com.example.playground.app.features.news.presentation.destination.newsDestination
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
@@ -13,5 +14,6 @@ fun MainNavigation(navController: NavHostController) {
         startDestination = Home
     ) {
         homeDestination()
+        newsDestination()
     }
 }

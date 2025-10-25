@@ -27,13 +27,37 @@ class NewsViewModel @Inject constructor(
     private val maxArticlesInMemory = 50
     private val maxArticlesInPage = 10
     private val maxPagesInMemory = maxArticlesInMemory / maxArticlesInPage
+    private var isLoadingMore = false
 
     init {
         loadNews(LoadDirection.APPEND)
     }
 
+    fun handleIntents(intent: NewsIntents) {
+        when (intent) {
+            is NewsIntents.ScrollPositionChanged -> {
+                handleScrollChanges(intent.firstVisibleIndex, intent.lastVisibleIndex)
+            }
+        }
+    }
+
+    private fun handleScrollChanges(firstVisibleIndex: Int, lastVisibleIndex: Int) {
+        if (isLoadingMore) return
+        val state = _uiState.value
+        if (firstVisibleIndex <= 5 && !isLoading() && !state.atStart) {
+            loadNews(LoadDirection.PREPEND)
+        } else {
+            val itemsRemaining = state.newsList.size - lastVisibleIndex
+            if (itemsRemaining <= 5 && !isLoading() && !state.atEnd) {
+                loadNews(LoadDirection.APPEND)
+            }
+        }
+    }
+
     private fun loadNews(loadDirection: LoadDirection) {
+        if (isLoading() || isLoadingMore) return
         setLoading()
+        isLoadingMore = true
         viewModelScope.launch {
             val state = _uiState.value
             val pageToLoad = when (loadDirection) {
@@ -61,6 +85,7 @@ class NewsViewModel @Inject constructor(
                     handleError()
                 }
             )
+            isLoadingMore = false
         }
     }
 
@@ -113,15 +138,21 @@ class NewsViewModel @Inject constructor(
     private fun handleError() {
         _uiState.update { state ->
             state.copy(
+                isLoading = false,
                 error = "Error Occurred"
             )
         }
     }
 
+    private fun isLoading() : Boolean {
+        return _uiState.value.isLoading
+    }
+
     private fun setLoading() {
         _uiState.update { state ->
             state.copy(
-                isLoading = true
+                isLoading = true,
+                error = ""
             )
         }
     }

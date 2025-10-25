@@ -2,6 +2,7 @@ package com.example.playground.app.common.presentation.screen
 
 import androidx.lifecycle.ViewModel
 import com.example.playground.app.common.core.helper.navigation.Navigator
+import com.example.playground.app.features.news.presentation.destination.News
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,7 +40,7 @@ class HomeViewModel @Inject constructor(
     private fun navigateToFeature(feature : String) {
         when (feature) {
             "NEWS" -> {
-
+                navigator.navigateTo(News)
             }
         }
     }

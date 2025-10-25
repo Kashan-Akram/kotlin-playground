@@ -12,13 +12,19 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 @InstallIn(ViewModelComponent::class)
 @Module
-abstract class NewsModule {
+abstract class NewsBindingModule {
 
+    @ViewModelScoped
     @Binds
-    @Provides
     abstract fun bindsNewsRepository(
         newsRepositoryImpl: NewsRepositoryImpl
     ) : NewsRepository
+
+}
+
+@InstallIn(ViewModelComponent::class)
+@Module
+object NewsModule {
 
     @ViewModelScoped
     @Provides
