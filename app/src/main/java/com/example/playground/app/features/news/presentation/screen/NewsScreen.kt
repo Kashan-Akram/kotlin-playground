@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.playground.app.common.core.helper.UtilFunctions
 import com.example.playground.app.features.news.presentation.components.NewsTile
 import kotlinx.coroutines.FlowPreview
@@ -76,9 +77,10 @@ fun NewsScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(
-                    count = pagingItems.itemCount
-                ) { index ->
-                    pagingItems[index]?.let { article ->
+                    count = pagingItems.itemCount,
+                    key = pagingItems.itemKey { it }
+                ) { i ->
+                    pagingItems[i]?.let { article ->
                         NewsTile(article) {}
                     }
                 }
