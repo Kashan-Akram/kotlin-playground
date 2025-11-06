@@ -1,6 +1,10 @@
 package com.example.playground.app.features.payments.domain
 
 import com.example.playground.app.features.payments.core.models.PaymentResult
+import com.example.playground.app.features.payments.domain.usecases.PalPayUseCase
+import com.example.playground.app.features.payments.domain.usecases.PayPalVerifyUseCase
+import com.example.playground.app.features.payments.domain.usecases.StripePayUseCase
+import com.example.playground.app.features.payments.domain.usecases.StripeVerifyUseCase
 import javax.inject.Inject
 
 interface PaymentManager {
@@ -25,4 +29,39 @@ class PaymentManagerImpl @Inject constructor(
         return useCase?.verify?.invoke(id) ?: PaymentResult()
     }
 
+}
+
+// for manual class object initialization
+class PaymentStrategy {
+    companion object {
+
+        fun getPaymentStrategy(provider: String): PayUseCase {
+            return when (provider) {
+                "paypal" -> {
+                    PalPayUseCase()
+                }
+                "stripe" -> {
+                    StripePayUseCase()
+                }
+                else -> {
+                    throw IllegalArgumentException("provider not found")
+                }
+            }
+        }
+
+        fun getVerifyStrategy(provider : String) : VerifyUseCase {
+            return when (provider) {
+                "paypal" -> {
+                    PayPalVerifyUseCase()
+                }
+                "stripe" -> {
+                    StripeVerifyUseCase()
+                }
+                else -> {
+                    throw IllegalArgumentException("provider not found")
+                }
+            }
+        }
+
+    }
 }
